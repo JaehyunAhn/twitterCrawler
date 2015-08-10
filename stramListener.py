@@ -16,13 +16,13 @@ api = tweepy.API(auth_handler = oAuth, api_root = '/1.1', parser=JSONParser())
 
 if __name__ == "__main__":
     # TOPIC SELECTION & FILE OPEN
-    topic = '사랑 그리움'
+    topic = '짝사랑 감정'
     f = open(topic+'.txt', 'a')
     # DATE SUBTRACTION
     delta = 0
     delay_flag = False
 
-    for j in range(100):
+    for j in range(1000):
         delta = j
         date = date.today() - timedelta(days=delta)
         print('loop in times:', '%s' % j, str(date))
@@ -36,19 +36,20 @@ if __name__ == "__main__":
                     f.write(result['statuses'][i]['text'])
             except:
                 pass
-        # SEARCH REQUEST
-        result = api.search(q=topic, count=100, until=date)
-        for i in range(100):
-            if i is 0:
+        if delay_flag == False:
+            # SEARCH REQUEST : result_type='popular'
+            result = api.search(q=topic, count=100, until=date)
+            for i in range(100):
+                if i is 0:
+                    try:
+                        print(result['statuses'][i]['text'])
+                    except:
+                        print('결과가 검색되지 않았습니다.')
+                        delay_flag = True
                 try:
-                    print(result['statuses'][i]['text'])
+                    f.write(result['statuses'][i]['text'])
+                    #print(result['statuses'][i]['retweet_count'])
                 except:
-                    print('결과가 검색되지 않았습니다.')
-                    delay_flag = True
-            try:
-                f.write(result['statuses'][i]['text'])
-                #print(result['statuses'][i]['retweet_count'])
-            except:
-                pass
+                    pass
         time.sleep(5)
     f.close()
